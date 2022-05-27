@@ -45,6 +45,18 @@ async function run() {
         console.log('collection found');
 
 
+        const verifyAdmin = async (req, res, next) => {
+            const requester = req.decoded.email;        // logged in users email
+            const requesterAccount = await userCollection.findOne({ email: requester });
+
+            if (requesterAccount.role === 'admin') {
+                next();
+            } else {
+                res.status(403).send({ message: 'forbidden access' });
+            }
+        }
+
+
         // updating or inserting the users in the db
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
@@ -74,11 +86,6 @@ async function run() {
             res.send(user);
         })
 
-        // getting all the users from db
-        app.get('/user', verifyJWT, async (req, res) => {
-            const users = await userCollection.find().toArray();
-            res.send(users);
-        })
 
         // get api to check whether a user is admin or not. find operation.
         app.get('/admin/:email', verifyJWT, async (req, res) => {
@@ -107,6 +114,26 @@ async function run() {
             const updatedUser = await userCollection.updateOne(filter, updateDoc);
             res.send(updatedUser);
         })
+
+        // getting all the users from db
+        app.get('/user', verifyJWT, verifyAdmin, async (req, res) => {
+            const users = await userCollection.find().toArray();
+            res.send(users);
+        })
+
+        // api to make other users admin if you are an admin user
+        app.put('/user/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
+            // if you are a admin, you can make others admin
+            const email = req.params.email;     // email that the admin is trying to give admin permission. it has been fetched from the url
+            const filter = { email: email };
+            const updatedDoc = {
+                $set: { role: 'admin' },
+            };
+
+            const result = await userCollection.updateOne(filter, updatedDoc);
+            res.send(result);
+        })
+
     } finally {
 
     }
