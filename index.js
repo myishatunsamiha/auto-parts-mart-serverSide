@@ -67,12 +67,12 @@ async function run() {
         })
 
         // // getting specific user info from db
-        // app.get('/user/:email', async (req, res) => {
-        //     const email = req.params.email;
-        //     const query = { email: email };
-        //     const user = await userCollection.findOne(query);
-        //     res.send(user);
-        // })
+        app.get('/user/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            res.send(user);
+        })
 
         // getting all the users from db
         app.get('/user', verifyJWT, async (req, res) => {
@@ -80,7 +80,33 @@ async function run() {
             res.send(users);
         })
 
+        // get api to check whether a user is admin or not. find operation.
+        app.get('/admin/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const user = await userCollection.findOne({ email: email });
+            const isAdmin = user.role === 'admin';
+            res.send({ admin: isAdmin });
+        })
 
+        // patch to update the profile of a user
+        app.patch('/user/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const updateDoc = {
+                $set: {
+                    name: user.name,
+                    email: user.email,
+                    education: user.education,
+                    location: user.location,
+                    phone: user.phone,
+                    linkedIn: user.linkedIn
+                }
+            }
+
+            const updatedUser = await userCollection.updateOne(filter, updateDoc);
+            res.send(updatedUser);
+        })
     } finally {
 
     }
