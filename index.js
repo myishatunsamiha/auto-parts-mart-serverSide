@@ -258,11 +258,28 @@ async function run() {
         })
 
         // get all orders for manage orders page
-        app.get('/order', verifyJWT, verifyAdmin, async (req, res) => {
+        app.get('/allorder', verifyJWT, verifyAdmin, async (req, res) => {
             const cursor = orderCollection.find();
             const orders = await cursor.toArray();
             res.send(orders);
         })
+
+
+        // to update payment data
+        app.patch('/shipOrder/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    shipped: true
+                }
+            }
+
+            const updatedOrder = await orderCollection.updateOne(filter, updateDoc);
+            res.send(updatedOrder);
+        })
+
+
     } finally {
 
     }
