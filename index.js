@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-var jwt = require('jsonwebtoken')       // requiring jwt
+// var jwt = require('jsonwebtoken')       // requiring jwt
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
@@ -16,25 +16,25 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
-function verifyJWT(req, res, next) {
-    const authHeader = req.headers.authorization;
-    console.log(authHeader);
-    if (!authHeader) {
-        return res.status(401).send({ message: 'unauthorized access' });
-    }
+// function verifyJWT(req, res, next) {
+//     const authHeader = req.headers.authorization;
+//     console.log(authHeader);
+//     if (!authHeader) {
+//         return res.status(401).send({ message: 'unauthorized access' });
+//     }
 
-    const token = authHeader.split(' ')[1];
-    console.log(token);
-    console.log(process.env.ACCESS_TOKEN_SECRET);
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
-        if (err) {
-            return res.status(403).send({ message: 'Forbidden access' });
-        }
-        req.decoded = decoded;
-        console.log(req.decoded);
-        next();
-    })
-}
+//     const token = authHeader.split(' ')[1];
+//     console.log(token);
+//     console.log(process.env.ACCESS_TOKEN_SECRET);
+//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+//         if (err) {
+//             return res.status(403).send({ message: 'Forbidden access' });
+//         }
+//         req.decoded = decoded;
+//         console.log(req.decoded);
+//         next();
+//     })
+// }
 
 
 client.connect(err => {
