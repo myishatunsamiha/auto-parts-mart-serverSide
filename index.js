@@ -287,6 +287,12 @@ async function run() {
             res.send(result);
         })
 
+        // getting all the reviews from db
+        app.get('/review', async (req, res) => {
+            const reviews = await reviewCollection.find().toArray();
+            res.send(reviews);
+        })
+
     } finally {
 
     }
