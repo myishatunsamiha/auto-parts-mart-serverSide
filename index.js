@@ -148,6 +148,15 @@ async function run() {
             console.log(products);
             res.send(products);
         })
+
+        // api to delete a product from manage product page
+        app.delete('/product/:id', verifyJWT, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const filter = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(filter);
+            res.send(result);
+        })
     } finally {
 
     }
