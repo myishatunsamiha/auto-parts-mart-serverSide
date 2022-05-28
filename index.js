@@ -5,7 +5,7 @@ require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port = process.env.PORT || 5000
-// const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 
 app.use(cors());
@@ -44,6 +44,8 @@ async function run() {
         const userCollection = client.db('auto-parts-mart').collection('users');
         const productCollection = client.db('auto-parts-mart').collection('products');
         const orderCollection = client.db('auto-parts-mart').collection('orders');
+        const paymentCollection = client.db('auto-parts-mart').collection('payments');
+
         console.log('collection found');
 
 
@@ -212,6 +214,55 @@ async function run() {
             res.send(result);
         })
 
+        // to display product order detail in payment page
+        app.get('/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const order = await orderCollection.findOne(query);
+            res.send(order);
+        })
+
+        // setting the payment intent api
+        app.post("/create-payment-intent", verifyJWT, async (req, res) => {
+            const order = req.body;
+            const price = order.price;
+            const amount = price * 100;
+
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: "usd",
+                payment_method_types: ['card']
+            });
+
+            res.send({
+                clientSecret: paymentIntent.client_secret,
+            });
+        });
+
+
+        // to update payment data
+        app.patch('/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId,
+                }
+            }
+
+            const updatedOrder = await orderCollection.updateOne(filter, updateDoc);
+            const result = await paymentCollection.insertOne(payment);
+            res.send(updateDoc);
+        })
+
+        // get all orders for manage orders page
+        app.get('/order', verifyJWT, verifyAdmin, async (req, res) => {
+            const cursor = orderCollection.find();
+            const orders = await cursor.toArray();
+            res.send(orders);
+        })
     } finally {
 
     }
