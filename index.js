@@ -141,6 +141,13 @@ async function run() {
             const result = await productCollection.insertOne(product);
             res.send(result);
         })
+
+        // get all the products list for manage products page
+        app.get('/product', verifyJWT, verifyAdmin, async (req, res) => {
+            const products = await productCollection.find().toArray();
+            console.log(products);
+            res.send(products);
+        })
     } finally {
 
     }
