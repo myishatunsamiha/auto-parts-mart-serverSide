@@ -180,11 +180,36 @@ async function run() {
             res.send(product);
         })
 
-
+        // api to post a order
         app.post('/order', verifyJWT, async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
             res.send({ success: true, result });
+        })
+
+        // getting orders of a particular user
+        app.get('/order', verifyJWT, async (req, res) => {
+            const email = req.query.email;  // take data from the query url
+
+            const decodedEmail = req.decoded.email;
+            console.log(decodedEmail);
+            if (email === decodedEmail) {
+                const query = { userEmail: email };
+                const cursor = orderCollection.find(query);
+                const orders = await cursor.toArray();
+                return res.send(orders);
+            } else {
+                return res.status(403).send({ message: 'forbidden access' });
+            }
+        })
+
+        // api to delete a order from my orders page
+        app.delete('/order/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const filter = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(filter);
+            res.send(result);
         })
 
     } finally {
