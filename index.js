@@ -43,6 +43,7 @@ async function run() {
         await client.connect();
         const userCollection = client.db('auto-parts-mart').collection('users');
         const productCollection = client.db('auto-parts-mart').collection('products');
+        const orderCollection = client.db('auto-parts-mart').collection('orders');
         console.log('collection found');
 
 
@@ -157,6 +158,35 @@ async function run() {
             const result = await productCollection.deleteOne(filter);
             res.send(result);
         })
+
+        // get all the products list for manage products page
+        app.get('/product', verifyJWT, verifyAdmin, async (req, res) => {
+            const products = await productCollection.find().toArray();
+            console.log(products);
+            res.send(products);
+        })
+
+        // get all the products list for manage products page
+        app.get('/producthome', async (req, res) => {
+            const products = await productCollection.find().toArray();
+            console.log(products);
+            res.send(products);
+        })
+
+        app.get('/product/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const product = await productCollection.findOne({ _id: ObjectId(id) });
+            console.log('the product is', product);
+            res.send(product);
+        })
+
+
+        app.post('/order', verifyJWT, async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.send({ success: true, result });
+        })
+
     } finally {
 
     }
