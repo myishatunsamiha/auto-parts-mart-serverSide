@@ -45,6 +45,7 @@ async function run() {
         const productCollection = client.db('auto-parts-mart').collection('products');
         const orderCollection = client.db('auto-parts-mart').collection('orders');
         const paymentCollection = client.db('auto-parts-mart').collection('payments');
+        const reviewCollection = client.db('auto-parts-mart').collection('reviews');
 
         console.log('collection found');
 
@@ -279,6 +280,12 @@ async function run() {
             res.send(updatedOrder);
         })
 
+        // insert a review
+        app.post('/review', verifyJWT, async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        })
 
     } finally {
 
