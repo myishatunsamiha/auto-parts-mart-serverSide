@@ -42,6 +42,7 @@ async function run() {
     try {
         await client.connect();
         const userCollection = client.db('auto-parts-mart').collection('users');
+        const productCollection = client.db('auto-parts-mart').collection('products');
         console.log('collection found');
 
 
@@ -134,6 +135,12 @@ async function run() {
             res.send(result);
         })
 
+        // insert a product in the database, if you are an admin
+        app.post('/product', verifyJWT, verifyAdmin, async (req, res) => {
+            const product = req.body;
+            const result = await productCollection.insertOne(product);
+            res.send(result);
+        })
     } finally {
 
     }
