@@ -15,7 +15,7 @@ app.use(express.json());      // to read data from body
 // const uri = `mongodb+srv://auto-parts-mart-admin:s14oPxv47xpSikfM@cluster0.ekvdp.mongodb.net/?retryWrites=true&w=majority`;
 // const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ekvdp.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_US}:${process.env.DB_PS}@cluster0.ekvdp.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 console.log(uri);
