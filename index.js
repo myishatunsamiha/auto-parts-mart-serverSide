@@ -300,7 +300,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-    res.send('This is Auto Parts Mart Server!')
+    res.send('This is Auto Parts Mart new modified Server !')
 })
 
 app.listen(port, () => {
