@@ -1,10 +1,10 @@
 const express = require('express')
 const cors = require('cors')
-var jwt = require('jsonwebtoken')       // requiring jwt
 require('dotenv').config()
+var jwt = require('jsonwebtoken')       // requiring jwt
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5050
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 
@@ -12,9 +12,13 @@ app.use(cors());
 app.use(express.json());      // to read data from body
 
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ekvdp.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://auto-parts-mart-admin:s14oPxv47xpSikfM@cluster0.ekvdp.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ekvdp.mongodb.net/?retryWrites=true&w=majority`;
+// const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+console.log(uri);
 
 function verifyJWT(req, res, next) {
     const authHeader = req.headers.authorization;
